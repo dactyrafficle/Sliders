@@ -95,13 +95,13 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
         // right
         // alert('RIGHT');
         slides.innerHTML = '<p>right</p>';
-        slides.innerHTML = '<p>' + this.current.y + '</p>';
+        //slides.innerHTML = '<p>' + this.current.y + '</p>';
         //goRight(3);
       } else {
         // left
         // alert('left');
         slides.innerHTML = 'left';
-        slides.innerHTML = '<p>' + this.current.y + '</p>';
+        //slides.innerHTML = '<p>' + this.current.y + '</p>';
       }
     } else {
       if (touchEndY > touchStartY) {
@@ -109,17 +109,16 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
         event.preventDefault();
         // alert('down');
         slides.innerHTML = 'down';
-        slides.innerHTML = '<p>' + this.current.x + '</p>';
+        //slides.innerHTML = '<p>' + this.current.x + '</p>';
       } else {
         // up
         // alert('up');
         slides.innerHTML = 'up';
-        slides.innerHTML = '<p>' + this.current.x + '</p>';
+        //slides.innerHTML = '<p>' + this.current.x + '</p>';
       }
     }
     
-    
-  }; //.bind(this); // close handleGesture()
+  }.bind(this); // close handleGesture()
 
   this.el.addEventListener('touchstart', function(e) {
     touchStartX = e.changedTouches[0].screenX;
