@@ -132,7 +132,7 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
 
   this.el.addEventListener('touchend', e => {
     touchendX = e.changedTouches[0].screenX;
-    touchendX = e.changedTouches[0].screenY;
+    touchendY = e.changedTouches[0].screenY;
     handleGesture()
   })
 
