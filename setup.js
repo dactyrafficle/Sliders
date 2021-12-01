@@ -97,11 +97,13 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
       if (touchendX > touchstartX) {
         
         // right swipe
+        alert('swiped right : ' + this.current.y);
         goRight(this.current.y);
 
       } else {
         
         // left swipe
+        alert('swiped left : ' + this.current.y);
         goLeft(this.current.y);
         
       }
@@ -145,7 +147,7 @@ function goLeft(dpx) {
     slideInProgress = true;
   }
 
-  alert('left swipe!');
+  // alert('left swipe!');
  
 }
 
