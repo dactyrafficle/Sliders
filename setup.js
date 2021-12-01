@@ -90,8 +90,11 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
     let dx = touchEndX-touchStartX;
     let dy = touchendY-touchstartY;
     
+    
     if (Math.random() > 0.5) {
-      goRight(3);
+      
+      alert('RIGHT');
+      //goRight(3);
     } else {
       goRight(this.current.y);
     }
