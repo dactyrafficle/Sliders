@@ -78,8 +78,8 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
   this.el.innerHTML = '<p>O : (' + this.origin.y + ', ' + this.origin.x + ')</p><p>C : (' + this.current.y +', ' + this.current.x + ')';
 
 
-  let touchstartX = 0;
-  let touchendX = 0;
+  let touchStartX = 0;
+  let touchEndX = 0;
   let touchstartY = 0;
   let touchendY = 0;
   let touchRow = this.current.y;
@@ -87,27 +87,28 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
 
   function handleGesture() {
     
-    let dx = touchendX-touchstartX;
+    let dx = touchEndX-touchStartX;
     let dy = touchendY-touchstartY;
     
-    goRight(3);
-    goRight(this.current.y);
-    
+    if (Math.random() > 0.5) {
+      goRight(3);
+    } else {
+      goRight(this.current.y);
+    }
     
     
     
   } // close handleGesture()
 
-  this.el.addEventListener('touchstart', e => {
-    
-    touchstartX = e.changedTouches[0].screenX;
+  this.el.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
     touchstartY = e.changedTouches[0].screenY;
   })
 
-  this.el.addEventListener('touchend', e => {
-    touchendX = e.changedTouches[0].screenX;
+  this.el.addEventListener('touchend', function(e) {
+    touchEndX = e.changedTouches[0].screenX;
     touchendY = e.changedTouches[0].screenY;
-    handleGesture()
+    handleGesture();
   })
 
 
