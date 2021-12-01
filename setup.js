@@ -12,6 +12,8 @@ let rows = 5;
 let blocks = [];
 
 
+let slideInProgress = false;
+
 let go_right = document.getElementById('go_right');
 
 window.onload = function() {
@@ -75,14 +77,40 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
 
   this.el.innerHTML = '<p>O : (' + this.origin.y + ', ' + this.origin.x + ')</p><p>C : (' + this.current.y +', ' + this.current.x + ')';
 
-  this.el.addEventListener('touchstart', handleTouchStart, false);        
-  this.el.addEventListener('touchmove', handleTouchMove, false);
+
+  let touchstartX = 0
+  let touchendX = 0
+
+  //const slider = document.getElementById('slider')
+
+  function handleGesture() {
+    if (touchendX < touchstartX) {
+      goRight(2);
+    }
+    if (touchendX > touchstartX) {
+      goRight(2);
+    }
+  }
+
+  this.el.addEventListener('touchstart', e => {
+    touchstartX = e.changedTouches[0].screenX
+  })
+
+  this.el.addEventListener('touchend', e => {
+    touchendX = e.changedTouches[0].screenX
+    handleGesture()
+  })
+
 
 }
 
 function goRight(dpx) {
   
-
+  if (slideInProgress) {
+    return;
+  } else {
+    slideInProgress = true;
+  }
   
   // GET ALL THE BLOCKS WE KNOW WE NEED TO SLIDE OVER
   let arr = [];
@@ -101,7 +129,7 @@ function goRight(dpx) {
   
   
     // ORIGIN & CURRENT
-    let block = new Block(arr[arr.length-1].current.x, dpx, -1, dpx, block_w, block_h, cols, rows);
+    let block = new Block(arr[arr.length-1].origin.x, dpx, -1, dpx, block_w, block_h, cols, rows);
     container.appendChild(block.el);
     blocks.push(block);
     arr.push(block);
@@ -161,20 +189,14 @@ function goRight(dpx) {
       }
       console.log(arr);
 
+      slideInProgress = false;
+
     }
     
   }, 1000/20);
   
 }
 
-function slideRight(row) {
-  
-  // copy it 0-4
-  // place it to the left of 0-0
-  // slide everything over
-  // delete 0-5
-  
-}
 
 
 // do everything inside window.onload
@@ -210,56 +232,3 @@ async function getImageData(src) {
 
 
 
-
-var xDown = null;                                                        
-var yDown = null;
-
-function getTouches(evt) {
-  return evt.touches ||             // browser API
-         evt.originalEvent.touches; // jQuery
-}                                                     
-                                                                         
-function handleTouchStart(evt) {
-    const firstTouch = getTouches(evt)[0];                                      
-    xDown = firstTouch.clientX;                                      
-    yDown = firstTouch.clientY;                                      
-};                                                
-                                                                         
-function handleTouchMove(evt) {
-    if ( ! xDown || ! yDown ) {
-        return;
-    }
-
-    var xUp = evt.touches[0].clientX;                                    
-    var yUp = evt.touches[0].clientY;
-
-    var xDiff = xDown - xUp;
-    var yDiff = yDown - yUp;
-                                                                         
-    if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
-        if ( xDiff > 0 ) {
-            /* right swipe */ 
-            
-            console.log('right');
-            goRight(2);
-            
-        } else {
-            /* left swipe */
-            
-            console.log('left');
-            
-        }                       
-    } else {
-        if ( yDiff > 0 ) {
-            /* down swipe */ 
-            console.log('down');
-            
-        } else { 
-            /* up swipe */
-            console.log('up');
-        }                                                                 
-    }
-    /* reset values */
-    xDown = null;
-    yDown = null;                                             
-};

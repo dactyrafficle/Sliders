@@ -19,6 +19,7 @@ html, body {
   border: 1px solid black;
   width: 90vw;
   height: 90vw;
+  overflow: hidden;
 }
 html, body {
   -webkit-touch-callout: none; /* iOS Safari */
