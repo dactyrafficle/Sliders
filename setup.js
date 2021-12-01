@@ -241,6 +241,7 @@ function handleTouchMove(evt) {
             /* right swipe */ 
             
             console.log('right');
+            goRight(2);
             
         } else {
             /* left swipe */
