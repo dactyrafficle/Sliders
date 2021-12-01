@@ -80,37 +80,46 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
 
   let touchStartX = 0;
   let touchEndX = 0;
-  let touchstartY = 0;
-  let touchendY = 0;
-  let touchRow = this.current.y;
-  let touchCol = this.current.x;
+  let touchStartY = 0;
+  let touchEndY = 0;
+  // let touchRow = this.current.y;
+  // let touchCol = this.current.x;
 
   function handleGesture() {
     
     let dx = touchEndX-touchStartX;
-    let dy = touchendY-touchstartY;
+    let dy = touchEndY-touchStartY;
     
-    
-    if (Math.random() > 0.5) {
-      
-      alert('RIGHT');
-      //goRight(3);
+    if (dx > dy) {
+      if (touchEndX > touchStartX) {
+        // right
+        alert('RIGHT');
+        //goRight(3);
+      } else {
+        // left
+        alert('left');
+      }
     } else {
-      goRight(this.current.y);
+      if (touchEndY > touchStartY) {
+        // down
+        alert('down');
+      } else {
+        // up
+        alert('up');
+      }
     }
-    
     
     
   } // close handleGesture()
 
   this.el.addEventListener('touchstart', function(e) {
     touchStartX = e.changedTouches[0].screenX;
-    touchstartY = e.changedTouches[0].screenY;
+    touchStartY = e.changedTouches[0].screenY;
   })
 
   this.el.addEventListener('touchend', function(e) {
     touchEndX = e.changedTouches[0].screenX;
-    touchendY = e.changedTouches[0].screenY;
+    touchEndY = e.changedTouches[0].screenY;
     handleGesture();
   })
 
