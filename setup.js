@@ -182,7 +182,7 @@ function goLeft(dpx) {
   let dx = 0;
   let animate = window.setInterval(function() {
     
-    dx += -5;
+    dx += -7;
     
     for (let i = 0; i < arr.length; i++) {
       arr[i].left = (arr[i].current.x)*arr[i].w + dx;
@@ -228,7 +228,7 @@ function goLeft(dpx) {
 
     }
     
-  }, 1000/10);
+  }, 1000/20);
 }
 
 function goRight(dpx) {
@@ -275,7 +275,7 @@ function goRight(dpx) {
   let dx = 0;
   let goRight = window.setInterval(function() {
     
-    dx += 5;
+    dx += 7;
     
     for (let i = 0; i < arr.length; i++) {
       
