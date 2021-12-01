@@ -93,25 +93,33 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
     if (dx > dy) {
       if (touchEndX > touchStartX) {
         // right
-        alert('RIGHT');
+        // alert('RIGHT');
+        slides.innerHTML = '<p>right</p>';
+        slides.innerHTML = '<p>' + this.current.y + '</p>';
         //goRight(3);
       } else {
         // left
-        alert('left');
+        // alert('left');
+        slides.innerHTML = 'left';
+        slides.innerHTML = '<p>' + this.current.y + '</p>';
       }
     } else {
       if (touchEndY > touchStartY) {
         // down
         event.preventDefault();
-        alert('down');
+        // alert('down');
+        slides.innerHTML = 'down';
+        slides.innerHTML = '<p>' + this.current.x + '</p>';
       } else {
         // up
-        alert('up');
+        // alert('up');
+        slides.innerHTML = 'up';
+        slides.innerHTML = '<p>' + this.current.x + '</p>';
       }
     }
     
     
-  } // close handleGesture()
+  }; //.bind(this); // close handleGesture()
 
   this.el.addEventListener('touchstart', function(e) {
     touchStartX = e.changedTouches[0].screenX;
