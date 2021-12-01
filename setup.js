@@ -92,16 +92,17 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
     
     if (dx > dy) {
       if (touchEndX > touchStartX) {
-        // right
-        // alert('RIGHT');
+        
+        // RIGHT
         slides.innerHTML = '<p>right</p>';
-        slides.innerHTML = '<p>' + this.current.y + '</p>';
-        //goRight(3);
+        slides.innerHTML += '<p>' + this.current.y + '</p>';
+        goRight(this.current.y);
+      
       } else {
         // left
         // alert('left');
         slides.innerHTML = '<p>left</p>';
-        slides.innerHTML = '<p>' + this.current.y + '</p>';
+        slides.innerHTML += '<p>' + this.current.y + '</p>';
       }
     } else {
       if (touchEndY > touchStartY) {
@@ -109,12 +110,12 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
         event.preventDefault();
         // alert('down');
         slides.innerHTML = '<p>down</p>';
-        slides.innerHTML = '<p>' + this.current.x + '</p>';
+        slides.innerHTML += '<p>' + this.current.x + '</p>';
       } else {
         // up
         // alert('up');
         slides.innerHTML = '<p>up</p>';
-        slides.innerHTML = '<p>' + this.current.x + '</p>';
+        slides.innerHTML += '<p>' + this.current.x + '</p>';
       }
     }
   }.bind(this);
