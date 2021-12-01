@@ -102,6 +102,7 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
     } else {
       if (touchEndY > touchStartY) {
         // down
+        event.preventDefault();
         alert('down');
       } else {
         // up
