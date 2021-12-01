@@ -1,0 +1,22 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+.outer {
+ display: table;
+ height: 100%;
+ width: 100%;
+}
+.inner {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+#container {
+  position: relative;
+  margin: 0 auto;
+  display: block;
+  border: 1px solid black;
+  width: 500;
+  height: 500;
+}
