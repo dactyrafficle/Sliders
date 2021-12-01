@@ -90,7 +90,7 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
     let dx = touchendX-touchstartX;
     let dy = touchendY-touchstartY;
     
-    
+    goRight(3);
     goRight(this.current.y);
     
     
