@@ -37,7 +37,7 @@ window.onload = function() {
   }
   
   go_right.addEventListener('click', function() {
-    goRight(2);
+    goLeft(2);
   });
 
   let url = './images/sunflower.jpg';
@@ -160,10 +160,17 @@ function goLeft(dpx) {
   console.log(arr);
 
   // ORIGIN & CURRENT
-  let block = new Block(arr[0].origin.x, dpx, cols, dpx, block_w, block_h, cols, rows);
+  let origin_x = arr[0].origin.x;
+  let origin_y = dpx;
+  let current_x = cols;
+  let current_y = dpx;
+
+  let block = new Block(origin_x, origin_y, current_x, current_y, block_w, block_h, cols, rows);
   container.appendChild(block.el);
   blocks.push(block);
   arr.push(block);
+    
+    console.log(Math.random);
     
   // sort based on current x
   arr.sort(function(a, b) {
@@ -178,11 +185,11 @@ function goLeft(dpx) {
     dx += -5;
     
     for (let i = 0; i < arr.length; i++) {
-      arr[i].left = (arr[i].current.x%arr[i].cols)*arr[i].w + dx;
+      arr[i].left = (arr[i].current.x)*arr[i].w + dx;
       arr[i].el.style.left = arr[i].left + 'px';
     }
     
-    if (dx <= block_w) {
+    if (dx <= -block_w) {
       
       // STOP ANIMATION
       window.clearInterval(animate);
@@ -190,10 +197,10 @@ function goLeft(dpx) {
       // UPDATE OBJ AND CONSTRAIN POS
       for (let i = 0; i < arr.length; i++) {
         
-        arr[i].current.x--;
+        arr[i].current.x--; // decrement by 1
         arr[i].current.y;
         
-        arr[i].top = arr[i].current.y*arr[i].h;
+        arr[i].top = (arr[i].current.y)*arr[i].h;
         arr[i].left = (arr[i].current.x)*arr[i].w;
 
         arr[i].el.style.top = arr[i].top; 
@@ -221,7 +228,7 @@ function goLeft(dpx) {
 
     }
     
-  }, 1000/20);
+  }, 1000/10);
 }
 
 function goRight(dpx) {
@@ -247,12 +254,16 @@ function goRight(dpx) {
   })
   console.log(arr);
   
-  
-    // ORIGIN & CURRENT
-    let block = new Block(arr[arr.length-1].origin.x, dpx, -1, dpx, block_w, block_h, cols, rows);
-    container.appendChild(block.el);
-    blocks.push(block);
-    arr.push(block);
+  // ORIGIN & CURRENT
+  let origin_x = arr[arr.length-1].origin.x;
+  let origin_y = dpx;
+  let current_x = -1;
+  let current_y = dpx;
+
+  let block = new Block(origin_x, origin_y, current_x, current_y, block_w, block_h, cols, rows);
+  container.appendChild(block.el);
+  blocks.push(block);
+  arr.push(block);
     
   // sort based on current x
   arr.sort(function(a, b) {
@@ -282,7 +293,7 @@ function goRight(dpx) {
       // UPDATE OBJ AND CONSTRAIN POS
       for (let i = 0; i < arr.length; i++) {
         
-        arr[i].current.x++;
+        arr[i].current.x++; // increment by 1
         arr[i].current.y;
         
         arr[i].top = arr[i].current.y*arr[i].h;
