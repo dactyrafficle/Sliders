@@ -78,30 +78,80 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
   this.el.innerHTML = '<p>O : (' + this.origin.y + ', ' + this.origin.x + ')</p><p>C : (' + this.current.y +', ' + this.current.x + ')';
 
 
-  let touchstartX = 0
-  let touchendX = 0
-
-  //const slider = document.getElementById('slider')
+  let touchstartX = 0;
+  let touchendX = 0;
+  let touchstartY = 0;
+  let touchendY = 0;
 
   function handleGesture() {
+    
+    let dx = Math.abs(touchendX-touchstartX);
+    let dy = Math.abs(touchendY-touchstartY);
+    
+    if (dx < 25 && dy < 25) {
+      return;
+    }
+    
+    if (dx > dy) {
+      
+      if (touchendX > touchstartX) {
+        
+        // right swipe
+        goRight(this.current.y);
+
+      } else {
+        
+        // left swipe
+        goLeft(this.current.y);
+        
+      }
+      
+    } else {
+      
+      if (touchstartY > touchendY) {
+        
+        // swipe up
+
+      } else {
+        
+        // swipe down
+        
+      }
+      
+    }
+    
     if (touchendX < touchstartX) {
-      goRight(2);
+      goRight(this.current.y); // go right
     }
     if (touchendX > touchstartX) {
-      goRight(2);
+      goRight(this.current.y); // go left
     }
   }
 
   this.el.addEventListener('touchstart', e => {
-    touchstartX = e.changedTouches[0].screenX
+    touchstartX = e.changedTouches[0].screenX;
+    touchstartY = e.changedTouches[0].screenY;
   })
 
   this.el.addEventListener('touchend', e => {
-    touchendX = e.changedTouches[0].screenX
+    touchendX = e.changedTouches[0].screenX;
+    touchendX = e.changedTouches[0].screenY;
     handleGesture()
   })
 
 
+}
+
+function goLeft(dpx) {
+  
+  if (slideInProgress) {
+    return;
+  } else {
+    slideInProgress = true;
+  }
+
+  alert('left swipe!');
+ 
 }
 
 function goRight(dpx) {
