@@ -87,8 +87,8 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
 
   function handleGesture() {
     
-    let dx = touchEndX-touchStartX;
-    let dy = touchEndY-touchStartY;
+    let dx = Math.abs(touchEndX-touchStartX);
+    let dy = Math.abs(touchEndY-touchStartY);
     
     if (dx > dy) {
       if (touchEndX > touchStartX) {
