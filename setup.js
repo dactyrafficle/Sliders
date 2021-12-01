@@ -94,15 +94,17 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
       if (touchEndX > touchStartX) {
         
         // RIGHT
-        slides.innerHTML = '<p>right</p>';
-        slides.innerHTML += '<p>' + this.current.y + '</p>';
+        // slides.innerHTML = '<p>right</p>';
+        // slides.innerHTML += '<p>' + this.current.y + '</p>';
         goRight(this.current.y);
       
       } else {
-        // left
-        // alert('left');
-        slides.innerHTML = '<p>left</p>';
-        slides.innerHTML += '<p>' + this.current.y + '</p>';
+        
+        // LEFT
+        // slides.innerHTML = '<p>left</p>';
+        // slides.innerHTML += '<p>' + this.current.y + '</p>';
+        goLeft(this.current.y);
+        
       }
     } else {
       if (touchEndY > touchStartY) {
@@ -120,45 +122,6 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
     }
   }.bind(this);
   
-  /*
-  function handleGesture() {
-    
-    let dx = Math.abs(touchEndX-touchStartX);
-    let dy = Math.abs(touchEndY-touchStartY);
-    
-    if (dx > dy) {
-      if (touchEndX > touchStartX) {
-        // right
-        // alert('RIGHT');
-        slides.innerHTML = '<p>right</p>';
-        //slides.innerHTML = '<p>' + this.current.y + '</p>';
-        //goRight(3);
-      } else {
-        // left
-        // alert('left');
-        slides.innerHTML = 'left';
-        //slides.innerHTML = '<p>' + this.current.y + '</p>';
-      }
-    } else {
-      if (touchEndY > touchStartY) {
-        // down
-        event.preventDefault();
-        // alert('down');
-        slides.innerHTML = 'down';
-        //slides.innerHTML = '<p>' + this.current.x + '</p>';
-      } else {
-        // up
-        // alert('up');
-        slides.innerHTML = 'up';
-        //slides.innerHTML = '<p>' + this.current.x + '</p>';
-      }
-    }
-    
-  }; // close handleGesture()
-
-  let hh = handleGesture.bind(
-  */
-  
   this.el.addEventListener('touchstart', function(e) {
     touchStartX = e.changedTouches[0].screenX;
     touchStartY = e.changedTouches[0].screenY;
@@ -174,15 +137,91 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
 }
 
 function goLeft(dpx) {
-  
+
   if (slideInProgress) {
     return;
   } else {
-    // slideInProgress = true;
+    slideInProgress = true;
   }
+  
+  // GET ALL THE BLOCKS WE KNOW WE NEED TO SLIDE OVER
+  let arr = [];
+  for (let i = 0; i < blocks.length; i++) {
+    if (blocks[i].current.y === dpx) {
+      arr.push(blocks[i]);
+    }
+  }
+  console.log(arr);
 
-  // alert('left swipe!');
- 
+  // SORT BY CURRENT X
+  arr.sort(function(a, b) {
+    return a.current.x - b.current.x;
+  })
+  console.log(arr);
+
+  // ORIGIN & CURRENT
+  let block = new Block(arr[0].origin.x, dpx, cols, dpx, block_w, block_h, cols, rows);
+  container.appendChild(block.el);
+  blocks.push(block);
+  arr.push(block);
+    
+  // sort based on current x
+  arr.sort(function(a, b) {
+    return a.current.x - b.current.x;
+  })
+  
+  // now animate to make it move to the right
+  
+  let dx = 0;
+  let animate = window.setInterval(function() {
+    
+    dx += -5;
+    
+    for (let i = 0; i < arr.length; i++) {
+      arr[i].left = (arr[i].current.x%arr[i].cols)*arr[i].w + dx;
+      arr[i].el.style.left = arr[i].left + 'px';
+    }
+    
+    if (dx <= block_w) {
+      
+      // STOP ANIMATION
+      window.clearInterval(animate);
+      
+      // UPDATE OBJ AND CONSTRAIN POS
+      for (let i = 0; i < arr.length; i++) {
+        
+        arr[i].current.x--;
+        arr[i].current.y;
+        
+        arr[i].top = arr[i].current.y*arr[i].h;
+        arr[i].left = (arr[i].current.x)*arr[i].w;
+
+        arr[i].el.style.top = arr[i].top; 
+        arr[i].el.style.left = arr[i].left;
+        arr[i].el.innerHTML = '<p>O : (' + arr[i].origin.y + ', ' + arr[i].origin.x + ')</p><p>C : (' + arr[i].current.y +', ' + arr[i].current.x + ')';
+
+      }
+      
+      // DELETE OBJECT
+      for (let i = blocks.length-1; i > 0; i--) {
+        if (blocks[i].current.x < 0) {
+          blocks[i].el.remove();
+          blocks.splice(i, 1);
+        }
+      }
+      for (let i = arr.length-1; i > 0; i--) {
+        if (arr[i].current.x < 0) {
+          console.log('hi');
+          arr.splice(i, 1);
+        }
+      }
+      console.log(arr);
+
+      slideInProgress = false;
+
+    }
+    
+  }, 1000/20);
 }
 
 function goRight(dpx) {
