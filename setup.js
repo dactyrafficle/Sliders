@@ -77,6 +77,7 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
 
   this.el.innerHTML = '<p>O : (' + this.origin.y + ', ' + this.origin.x + ')</p><p>C : (' + this.current.y +', ' + this.current.x + ')';
 
+  
 
   let touchStartX = 0;
   let touchEndX = 0;
@@ -85,6 +86,40 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
   // let touchRow = this.current.y;
   // let touchCol = this.current.x;
 
+  this.handleGesture = function() {
+    let dx = Math.abs(touchEndX-touchStartX);
+    let dy = Math.abs(touchEndY-touchStartY);
+    
+    if (dx > dy) {
+      if (touchEndX > touchStartX) {
+        // right
+        // alert('RIGHT');
+        slides.innerHTML = '<p>right</p>';
+        slides.innerHTML = '<p>' + this.current.y + '</p>';
+        //goRight(3);
+      } else {
+        // left
+        // alert('left');
+        slides.innerHTML = '<p>left</p>';
+        slides.innerHTML = '<p>' + this.current.y + '</p>';
+      }
+    } else {
+      if (touchEndY > touchStartY) {
+        // down
+        event.preventDefault();
+        // alert('down');
+        slides.innerHTML = '<p>down</p>';
+        slides.innerHTML = '<p>' + this.current.x + '</p>';
+      } else {
+        // up
+        // alert('up');
+        slides.innerHTML = '<p>up</p>';
+        slides.innerHTML = '<p>' + this.current.x + '</p>';
+      }
+    }
+  }.bind(this);
+  
+  /*
   function handleGesture() {
     
     let dx = Math.abs(touchEndX-touchStartX);
@@ -118,8 +153,11 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
       }
     }
     
-  }.bind(this); // close handleGesture()
+  }; // close handleGesture()
 
+  let hh = handleGesture.bind(
+  */
+  
   this.el.addEventListener('touchstart', function(e) {
     touchStartX = e.changedTouches[0].screenX;
     touchStartY = e.changedTouches[0].screenY;
@@ -128,8 +166,8 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
   this.el.addEventListener('touchend', function(e) {
     touchEndX = e.changedTouches[0].screenX;
     touchEndY = e.changedTouches[0].screenY;
-    handleGesture();
-  })
+    this.handleGesture();
+  }.bind(this))
 
 
 }
