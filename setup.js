@@ -82,50 +82,24 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
   let touchendX = 0;
   let touchstartY = 0;
   let touchendY = 0;
+  let touchRow = this.current.y;
+  let touchCol = this.current.x;
 
   function handleGesture() {
     
-    let dx = Math.abs(touchendX-touchstartX);
-    let dy = Math.abs(touchendY-touchstartY);
+    let dx = touchendX-touchstartX;
+    let dy = touchendY-touchstartY;
     
-    if (dx < 25 && dy < 25) {
-      // return;
-    }
     
-    if (dx > dy) {
-      
-      if (touchendX > touchstartX) {
-        
-        // right swipe
-        alert('swiped right : ' + this.current.y);
-        goRight(this.current.y);
-
-      } else {
-        
-        // left swipe
-        alert('swiped left : ' + this.current.y);
-        goLeft(this.current.y);
-        
-      }
-      
-    } else {
-      
-      if (touchstartY > touchendY) {
-        
-        // swipe up
-
-      } else {
-        
-        // swipe down
-        
-      }
-      
-    }
+    goRight(this.current.y);
     
-
+    
+    
+    
   } // close handleGesture()
 
   this.el.addEventListener('touchstart', e => {
+    
     touchstartX = e.changedTouches[0].screenX;
     touchstartY = e.changedTouches[0].screenY;
   })
