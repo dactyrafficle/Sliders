@@ -89,7 +89,7 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
     let dy = Math.abs(touchendY-touchstartY);
     
     if (dx < 25 && dy < 25) {
-      return;
+      // return;
     }
     
     if (dx > dy) {
@@ -120,13 +120,8 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
       
     }
     
-    if (touchendX < touchstartX) {
-      goRight(this.current.y); // go right
-    }
-    if (touchendX > touchstartX) {
-      goRight(this.current.y); // go left
-    }
-  }
+
+  } // close handleGesture()
 
   this.el.addEventListener('touchstart', e => {
     touchstartX = e.changedTouches[0].screenX;
