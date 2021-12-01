@@ -144,7 +144,7 @@ function goLeft(dpx) {
   if (slideInProgress) {
     return;
   } else {
-    slideInProgress = true;
+    // slideInProgress = true;
   }
 
   // alert('left swipe!');
