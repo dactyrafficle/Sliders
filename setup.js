@@ -50,8 +50,8 @@ async function doAllTheWork() {
     container_h = container.getBoundingClientRect().bottom - container.getBoundingClientRect().top;
     
     // GET THE NUMBER OF COLS AND ROWS
-    cols = Math.floor(imgdata.width / 200);
-    rows = Math.floor(imgdata.height / 200);
+    cols = Math.floor(imgdata.width / 150);
+    rows = Math.floor(imgdata.height / 150);
     
     // BLOCK WIDTH
     block_w = container_w / cols;
