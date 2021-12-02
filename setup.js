@@ -35,7 +35,7 @@ window.onload = function() {
     
     // SIZE THE CONTAINER
     container.style.width = window.innerWidth*0.8;
-    container.style.height = window.innerHeight*0.8*(imgdata.height/imgdata.width);
+    container.style.height = window.innerWidth*0.8*(imgdata.height/imgdata.width);
     container_w = container.getBoundingClientRect().right - container.getBoundingClientRect().left;
     container_h = container.getBoundingClientRect().bottom - container.getBoundingClientRect().top;
     
