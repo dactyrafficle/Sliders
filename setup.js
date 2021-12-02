@@ -63,18 +63,48 @@ window.onload = function() {
         
         }
       }
+      
+      up_move();
+      left_move();
+      
+      async function up_move() {
+        console.log('up');
+        const result_1 = await goUp(2);
+        return await left_move();
+      }
+      async function left_move() {
+        console.log('left');
+        const result_2 = await goLeft(2);
+        return;
+      } 
+
     
   }
   
   img.src = url;
   
   
-  
-  go_right.addEventListener('click', function() {
-    goLeft(2);
+  function goStart() {
+    
+  }
+
+
+  go_start.addEventListener('click', function() {
+    goStart(2);
   });
 
-
+  go_right.addEventListener('click', function() {
+    goRight(2);
+  });
+  go_left.addEventListener('click', function() {
+    goLeft(2);
+  });
+  go_up.addEventListener('click', function() {
+    goUp(2);
+  });
+  go_down.addEventListener('click', function() {
+    goDown(2);
+  });
 
   
   
@@ -135,24 +165,15 @@ function Block(imgdata, original_x, original_y, current_x, current_y, w, h, cols
   
   this.el.appendChild(img);
 
-
-
-
   this.el.style.width = this.w;
   this.el.style.height = this.h;
   this.el.style.top = this.top; 
   this.el.style.left = this.left;
 
-  // this.el.innerHTML = '<p>O : (' + this.origin.y + ', ' + this.origin.x + ')</p><p>C : (' + this.current.y +', ' + this.current.x + ')';
-
-  
-
   let touchStartX = 0;
   let touchEndX = 0;
   let touchStartY = 0;
   let touchEndY = 0;
-  // let touchRow = this.current.y;
-  // let touchCol = this.current.x;
 
   this.handleGesture = function() {
     let dx = Math.abs(touchEndX-touchStartX);
@@ -176,16 +197,15 @@ function Block(imgdata, original_x, original_y, current_x, current_y, w, h, cols
       }
     } else {
       if (touchEndY > touchStartY) {
-        // down
+        
+        // DOWN
         event.preventDefault();
-        // alert('down');
-        slides.innerHTML = '<p>down</p>';
-        slides.innerHTML += '<p>' + this.current.x + '</p>';
+        goDown(this.current.x);
+      
       } else {
-        // up
-        // alert('up');
-        slides.innerHTML = '<p>up</p>';
-        slides.innerHTML += '<p>' + this.current.x + '</p>';
+
+        // UP
+        goUp(this.current.x);
       }
     }
   }.bind(this);
@@ -204,7 +224,7 @@ function Block(imgdata, original_x, original_y, current_x, current_y, w, h, cols
 
 }
 
-function goLeft(dpx) {
+async function goLeft(dpx) {
 
   if (slideInProgress) {
     return;
@@ -348,11 +368,8 @@ function goRight(dpx) {
     dx += pixels_per_frame;
     
     for (let i = 0; i < arr.length; i++) {
-      
-      // take the currentx
       arr[i].left = (arr[i].current.x%arr[i].cols)*arr[i].w + dx;
       arr[i].el.style.left = arr[i].left + 'px';
-
     }
     
     if (dx >= block_w) {
@@ -399,19 +416,208 @@ function goRight(dpx) {
 }
 
 
+function goUp(dpx) {
 
-// do everything inside window.onload
+  if (slideInProgress) {
+    return;
+  } else {
+    slideInProgress = true;
+  }
+  
+  // GET ALL THE BLOCKS WE KNOW WE NEED TO SLIDE OVER
+  let arr = [];
+  for (let i = 0; i < blocks.length; i++) {
+    if (blocks[i].current.x === dpx) {
+      arr.push(blocks[i]);
+    }
+  }
+  console.log(arr);
 
-// slice the img up and into nxn parts, and save the img datas
-// each gets an img tag, and a div parent
-// container is relative
-// divs are absolute, relative to parent
+  // SORT BY CURRENT X
+  arr.sort(function(a, b) {
+    return a.current.y - b.current.y;
+  })
+  console.log(arr);
+
+///
+
+  // ORIGIN & CURRENT
+  let origin_x = dpx;
+  let origin_y = arr[0].origin.y;
+  let current_x = dpx;
+  let current_y = rows;
+
+
+///
+
+  // let block_imgdata = ctx.getImageData(x, y, block_w, block_h);
+  let block = new Block(arr[0].imgdata, origin_x, origin_y, current_x, current_y, block_w, block_h, cols, rows);
+  container.appendChild(block.el);
+  blocks.push(block);
+  arr.push(block);
+    
+  // sort based on current x
+  arr.sort(function(a, b) {
+    return a.current.x - b.current.x;
+  })
+  
+  // now animate to make it move to the right
+  
+  let dy = 0;
+  let animate = window.setInterval(function() {
+    
+    dy += -pixels_per_frame;
+    
+    for (let i = 0; i < arr.length; i++) {
+      arr[i].top = (arr[i].current.y)*arr[i].h + dy;
+      arr[i].el.style.top = arr[i].top + 'px';
+    }
+
+///
+
+    if (dy <= -block_h) {
+      
+      // STOP ANIMATION
+      window.clearInterval(animate);
+      
+      // UPDATE OBJ AND CONSTRAIN POS
+      for (let i = 0; i < arr.length; i++) {
+        
+        // arr[i].current.x;
+        arr[i].current.y--; // decrement by 1
+        
+        arr[i].top = (arr[i].current.y)*arr[i].h;
+        arr[i].left = (arr[i].current.x)*arr[i].w;
+
+        arr[i].el.style.top = arr[i].top; 
+        arr[i].el.style.left = arr[i].left;
+
+      }
+      
+      // DELETE OBJECT
+      for (let i = blocks.length-1; i > 0; i--) {
+        if (blocks[i].current.y >= blocks[i].rows || blocks[i].current.y < 0) {
+          blocks[i].el.remove();
+          blocks.splice(i, 1);
+        }
+      }
+      for (let i = arr.length-1; i > 0; i--) {
+        if (arr[i].current.y >= arr[i].rows || arr[i].current.y < 0) {
+          arr.splice(i, 1);
+        }
+      }
+      console.log(arr);
+
+      slideInProgress = false;
+      // return slideInProgress;
+
+    }
+    
+  }, 1000/fps);
+  
+}
 
 
 
+function goDown(dpx) {
+  
+  if (slideInProgress) {
+    return;
+  } else {
+    slideInProgress = true;
+  }
+  
+  // GET ALL THE BLOCKS WE KNOW WE NEED TO SLIDE OVER
+  let arr = [];
+  for (let i = 0; i < blocks.length; i++) {
+    if (blocks[i].current.x === dpx) {
+      arr.push(blocks[i]);
+    }
+  }
+  console.log(arr);
 
-// but this function is async
-// i want to make it a promise, so that i can do getImageData(src).then()
+  // SORT BY CURRENT X
+  arr.sort(function(a, b) {
+    return a.current.y - b.current.y;
+  })
+  console.log(arr);
+
+///
+
+  // ORIGIN & CURRENT
+  let origin_x = dpx;
+  let origin_y = arr[arr.length-1].origin.y;
+  let current_x = dpx;
+  let current_y = -1;
+
+///
+
+  // let block_imgdata = ctx.getImageData(x, y, block_w, block_h);
+  let block = new Block(arr[arr.length-1].imgdata, origin_x, origin_y, current_x, current_y, block_w, block_h, cols, rows);
+  container.appendChild(block.el);
+  blocks.push(block);
+  arr.push(block);
+    
+  // sort based on current x
+  arr.sort(function(a, b) {
+    return a.current.x - b.current.x;
+  })
+  
+  // now animate to make it move to the right
+  
+  let dy = 0;
+  let animate = window.setInterval(function() {
+    
+    dy += pixels_per_frame;
+    
+    for (let i = 0; i < arr.length; i++) {
+      arr[i].top = (arr[i].current.y)*arr[i].h + dy;
+      arr[i].el.style.top = arr[i].top + 'px';
+    }
+
+///
+
+    if (dy >= block_h) {
+      
+      // STOP ANIMATION
+      window.clearInterval(animate);
+      
+      // UPDATE OBJ AND CONSTRAIN POS
+      for (let i = 0; i < arr.length; i++) {
+        
+        // arr[i].current.x;
+        arr[i].current.y++; // increment by 1
+        
+        arr[i].top = (arr[i].current.y)*arr[i].h;
+        arr[i].left = (arr[i].current.x)*arr[i].w;
+
+        arr[i].el.style.top = arr[i].top; 
+        arr[i].el.style.left = arr[i].left;
+
+      }
+      
+      // DELETE OBJECT
+      for (let i = blocks.length-1; i > 0; i--) {
+        if (blocks[i].current.y >= blocks[i].rows || blocks[i].current.y < 0) {
+          blocks[i].el.remove();
+          blocks.splice(i, 1);
+        }
+      }
+      for (let i = arr.length-1; i > 0; i--) {
+        if (arr[i].current.y >= arr[i].rows || arr[i].current.y < 0) {
+          arr.splice(i, 1);
+        }
+      }
+      console.log(arr);
+
+      slideInProgress = false;
+
+    }
+    
+  }, 1000/fps);
+  
+}
+
 
 async function getImageData(src) {
   
