@@ -50,8 +50,8 @@ async function doAllTheWork() {
     container_h = container.getBoundingClientRect().bottom - container.getBoundingClientRect().top;
     
     // GET THE NUMBER OF COLS AND ROWS
-    cols = Math.floor(imgdata.width / 100);
-    rows = Math.floor(imgdata.height / 100);
+    cols = Math.floor(imgdata.width / 200);
+    rows = Math.floor(imgdata.height / 200);
     
     // BLOCK WIDTH
     block_w = container_w / cols;
@@ -75,6 +75,15 @@ async function doAllTheWork() {
   
   img.src = url;
   
+  /*
+  
+  
+async function goLeft(dpx) {
+  return myPromise = new Promise(function(myResolve) { 
+  return myResolve(x);
+});
+
+  */
 
   go_start.addEventListener('click', function() {
     goRight(Math.floor(Math.random()*rows))
