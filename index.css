@@ -20,8 +20,8 @@ body {
   margin: 0 auto;
   display: block;
   border: 1px solid black;
-  width: 90vw;
-  height: 90vw;
+  /* width: 90vw;  do w js
+  height: 90vw; */
   overflow: hidden;
   /* touch-action: none; */
 }

@@ -1,16 +1,15 @@
 
-let imgdata;
+let container, container_w, container_h;
 
-let container;
-let container_w;
-let container_h;
-
-let block_w;
-let block_h;
-let cols = 5;
-let rows = 5;
+let block_w, block_h;
+let cols, rows;
 let blocks = [];
 
+let pixels_per_frame = 7;
+let fps = 25;
+
+let c, ctx, img, imgdata;
+let url = './images/sunflower.jpg';
 
 let slideInProgress = false;
 
@@ -19,38 +18,76 @@ let go_right = document.getElementById('go_right');
 window.onload = function() {
   
   container = document.getElementById('container');
-  container_w = container.getBoundingClientRect().right - container.getBoundingClientRect().left;
-  container_h = container.getBoundingClientRect().bottom - container.getBoundingClientRect().top;
+
   
-  block_w = container_w / cols;
-  block_h = container_h / rows;
+  c = document.createElement('canvas');
+  ctx = c.getContext('2d');
+  img = document.createElement('img');
   
-  for (let y = 0; y < rows; y++) {
-    for (let x = 0; x < cols; x++) {
+  img.onload = function() {
+    c.width = img.width;
+    c.height = img.height;
+    ctx.drawImage(img, 0, 0);
+    imgdata = ctx.getImageData(0, 0, c.width, c.height);
+    console.log(imgdata);
     
-    // INITIALIZE AS ORIGIN = CURRENT
-    let block = new Block(x, y, x, y, block_w, block_h, cols, rows);
-    container.appendChild(block.el);
-    blocks.push(block);
+    /* WHEN WE GET A NEW IMAGE */
     
-    }
+    // SIZE THE CONTAINER
+    container.style.width = window.innerWidth*0.8;
+    container.style.height = window.innerHeight*0.8*(imgdata.height/imgdata.width);
+    container_w = container.getBoundingClientRect().right - container.getBoundingClientRect().left;
+    container_h = container.getBoundingClientRect().bottom - container.getBoundingClientRect().top;
+    
+    // GET THE NUMBER OF COLS AND ROWS
+    cols = Math.floor(imgdata.width / 100);
+    rows = Math.floor(imgdata.height / 100);
+    
+    // BLOCK WIDTH
+    block_w = container_w / cols;
+    block_h = container_h / rows;
+    
+    /* WHEN WE GET A NEW IMAGE */
+    
+    // in here
+    
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+        
+        // feed imgdata
+        
+        // INITIALIZE AS ORIGIN = CURRENT
+        let block = new Block(imgdata, x, y, x, y, block_w, block_h, cols, rows);
+        container.appendChild(block.el);
+        blocks.push(block);
+        
+        }
+      }
+    
   }
+  
+  img.src = url;
+  
+  
   
   go_right.addEventListener('click', function() {
     goLeft(2);
   });
 
-  let url = './images/sunflower.jpg';
+
+
+  
+  
 }
 
 
-function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
+function Block(imgdata, original_x, original_y, current_x, current_y, w, h, cols, rows) {
 
   this.el = document.createElement('div');
   this.el.style.position = 'absolute';
   this.el.style.border = '1px solid #999';
   this.el.style.fontFamily = 'calibri';
-    
+
   this.origin = {
     'x':original_x,
     'y':original_y
@@ -69,13 +106,44 @@ function Block(original_x, original_y, current_x, current_y, w, h, cols, rows) {
 
   this.top = this.current.y*this.h;
   this.left = (this.current.x%this.cols)*this.w;
+  
+  // READY TO EXTRACT
+  this.imgdata = imgdata;
+  let c = document.createElement('canvas');
+  let ctx = c.getContext('2d');
+  c.width = imgdata.width;
+  c.height = imgdata.height;
+  ctx.putImageData(this.imgdata, 0, 0);
+  
+  // EXRACT
+  let sw = imgdata.width / this.cols;
+  let sh = imgdata.height / this.rows;
+  let sx = this.origin.x * sw;
+  let sy = this.origin.y * sh;
+  let block_imgdata = ctx.getImageData(sx, sy, sw, sh);
+  console.log(block_imgdata);
+  
+  c.width = block_imgdata.width;
+  c.height = block_imgdata.height;
+  ctx.putImageData(block_imgdata, 0, 0);
+  
+  let data_url = c.toDataURL();
+  let img = document.createElement('img');
+  img.src = data_url;
+  img.width = this.w;
+  img.height = this.h;
+  
+  this.el.appendChild(img);
+
+
+
 
   this.el.style.width = this.w;
   this.el.style.height = this.h;
   this.el.style.top = this.top; 
   this.el.style.left = this.left;
 
-  this.el.innerHTML = '<p>O : (' + this.origin.y + ', ' + this.origin.x + ')</p><p>C : (' + this.current.y +', ' + this.current.x + ')';
+  // this.el.innerHTML = '<p>O : (' + this.origin.y + ', ' + this.origin.x + ')</p><p>C : (' + this.current.y +', ' + this.current.x + ')';
 
   
 
@@ -164,8 +232,9 @@ function goLeft(dpx) {
   let origin_y = dpx;
   let current_x = cols;
   let current_y = dpx;
-
-  let block = new Block(origin_x, origin_y, current_x, current_y, block_w, block_h, cols, rows);
+  
+  // let block_imgdata = ctx.getImageData(x, y, block_w, block_h);
+  let block = new Block(arr[0].imgdata, origin_x, origin_y, current_x, current_y, block_w, block_h, cols, rows);
   container.appendChild(block.el);
   blocks.push(block);
   arr.push(block);
@@ -182,7 +251,7 @@ function goLeft(dpx) {
   let dx = 0;
   let animate = window.setInterval(function() {
     
-    dx += -7;
+    dx += -pixels_per_frame;
     
     for (let i = 0; i < arr.length; i++) {
       arr[i].left = (arr[i].current.x)*arr[i].w + dx;
@@ -205,7 +274,7 @@ function goLeft(dpx) {
 
         arr[i].el.style.top = arr[i].top; 
         arr[i].el.style.left = arr[i].left;
-        arr[i].el.innerHTML = '<p>O : (' + arr[i].origin.y + ', ' + arr[i].origin.x + ')</p><p>C : (' + arr[i].current.y +', ' + arr[i].current.x + ')';
+        // arr[i].el.innerHTML = '<p>O : (' + arr[i].origin.y + ', ' + arr[i].origin.x + ')</p><p>C : (' + arr[i].current.y +', ' + arr[i].current.x + ')';
 
       }
       
@@ -228,7 +297,7 @@ function goLeft(dpx) {
 
     }
     
-  }, 1000/20);
+  }, 1000/fps);
 }
 
 function goRight(dpx) {
@@ -260,7 +329,8 @@ function goRight(dpx) {
   let current_x = -1;
   let current_y = dpx;
 
-  let block = new Block(origin_x, origin_y, current_x, current_y, block_w, block_h, cols, rows);
+  // let block_imgdata = ctx.getImageData(x, y, block_w, block_h);
+  let block = new Block(arr[arr.length-1].imgdata, origin_x, origin_y, current_x, current_y, block_w, block_h, cols, rows);
   container.appendChild(block.el);
   blocks.push(block);
   arr.push(block);
@@ -275,7 +345,7 @@ function goRight(dpx) {
   let dx = 0;
   let goRight = window.setInterval(function() {
     
-    dx += 7;
+    dx += pixels_per_frame;
     
     for (let i = 0; i < arr.length; i++) {
       
@@ -301,7 +371,7 @@ function goRight(dpx) {
 
         arr[i].el.style.top = arr[i].top; 
         arr[i].el.style.left = arr[i].left;
-        arr[i].el.innerHTML = '<p>O : (' + arr[i].origin.y + ', ' + arr[i].origin.x + ')</p><p>C : (' + arr[i].current.y +', ' + arr[i].current.x + ')';
+        // arr[i].el.innerHTML = '<p>O : (' + arr[i].origin.y + ', ' + arr[i].origin.x + ')</p><p>C : (' + arr[i].current.y +', ' + arr[i].current.x + ')';
 
       }
       
@@ -324,7 +394,7 @@ function goRight(dpx) {
 
     }
     
-  }, 1000/20);
+  }, 1000/fps);
   
 }
 
