@@ -25,6 +25,17 @@ body {
   overflow: hidden;
   /* touch-action: none; */
 }
+.wsad {
+  display: none;
+}
+button {
+  margin: 1vh;
+  border: 1px solid #999;
+  border-radius: 0px;
+  font-family: verdana;
+  padding: 1vh;
+  font-size: 1.3em;
+}
 html, body {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */

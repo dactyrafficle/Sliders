@@ -17,9 +17,19 @@ let go_right = document.getElementById('go_right');
 
 window.onload = function() {
   
+  doAllTheWork()
+    .then(function() {
+      goLeft(2);
+    });
+  
+}
+
+async function doAllTheWork() {
+
+  return myPromise = new Promise(function(myResolve) { 
+
   container = document.getElementById('container');
 
-  
   c = document.createElement('canvas');
   ctx = c.getContext('2d');
   img = document.createElement('img');
@@ -54,8 +64,6 @@ window.onload = function() {
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
         
-        // feed imgdata
-        
         // INITIALIZE AS ORIGIN = CURRENT
         let block = new Block(imgdata, x, y, x, y, block_w, block_h, cols, rows);
         container.appendChild(block.el);
@@ -63,52 +71,62 @@ window.onload = function() {
         
         }
       }
-      
-      up_move();
-      left_move();
-      
-      async function up_move() {
-        console.log('up');
-        const result_1 = await goUp(2);
-        return await left_move();
-      }
-      async function left_move() {
-        console.log('left');
-        const result_2 = await goLeft(2);
-        return;
-      } 
-
-    
   }
   
   img.src = url;
   
-  
-  function goStart() {
-    
-  }
-
 
   go_start.addEventListener('click', function() {
-    goStart(2);
+    goRight(Math.floor(Math.random()*rows))
+    .then(function() {
+      goDown(Math.floor(Math.random()*cols))
+        .then(function() {
+          goLeft(Math.floor(Math.random()*rows))
+            .then(function() {
+              goUp(Math.floor(Math.random()*cols))
+                .then(function() {
+                goRight(Math.floor(Math.random()*rows))
+                                .then(function() {
+                goDown(Math.floor(Math.random()*cols))
+                                .then(function() {
+                goLeft(Math.floor(Math.random()*rows))
+                                .then(function() {
+                goUp(Math.floor(Math.random()*cols))
+                                .then(function() {
+                goRight(Math.floor(Math.random()*rows))
+                                .then(function() {
+                goDown(Math.floor(Math.random()*cols))
+                })
+                })
+                })
+                })
+                })
+                })
+            })
+        })   
+    })
   });
 
   go_right.addEventListener('click', function() {
-    goRight(2);
+    goRight(2).then(r => console.log(r));
   });
   go_left.addEventListener('click', function() {
-    goLeft(2);
+    goLeft(2).then(r => console.log(r));
+    
   });
   go_up.addEventListener('click', function() {
-    goUp(2);
+    goUp(2).then(r => console.log(r));
   });
   go_down.addEventListener('click', function() {
-    goDown(2);
+    goDown(2).then(r => console.log(r));
   });
+
 
   
   
-}
+}); // closing promise
+  
+} // closing doAllTheWork
 
 
 function Block(imgdata, original_x, original_y, current_x, current_y, w, h, cols, rows) {
@@ -151,7 +169,6 @@ function Block(imgdata, original_x, original_y, current_x, current_y, w, h, cols
   let sx = this.origin.x * sw;
   let sy = this.origin.y * sh;
   let block_imgdata = ctx.getImageData(sx, sy, sw, sh);
-  console.log(block_imgdata);
   
   c.width = block_imgdata.width;
   c.height = block_imgdata.height;
@@ -183,15 +200,11 @@ function Block(imgdata, original_x, original_y, current_x, current_y, w, h, cols
       if (touchEndX > touchStartX) {
         
         // RIGHT
-        // slides.innerHTML = '<p>right</p>';
-        // slides.innerHTML += '<p>' + this.current.y + '</p>';
         goRight(this.current.y);
       
       } else {
         
         // LEFT
-        // slides.innerHTML = '<p>left</p>';
-        // slides.innerHTML += '<p>' + this.current.y + '</p>';
         goLeft(this.current.y);
         
       }
@@ -226,6 +239,8 @@ function Block(imgdata, original_x, original_y, current_x, current_y, w, h, cols
 
 async function goLeft(dpx) {
 
+  return myPromise = new Promise(function(myResolve) { 
+
   if (slideInProgress) {
     return;
   } else {
@@ -239,13 +254,13 @@ async function goLeft(dpx) {
       arr.push(blocks[i]);
     }
   }
-  console.log(arr);
+  // console.log(arr);
 
   // SORT BY CURRENT X
   arr.sort(function(a, b) {
     return a.current.x - b.current.x;
   })
-  console.log(arr);
+  // console.log(arr);
 
   // ORIGIN & CURRENT
   let origin_x = arr[0].origin.x;
@@ -259,7 +274,6 @@ async function goLeft(dpx) {
   blocks.push(block);
   arr.push(block);
     
-    console.log(Math.random);
     
   // sort based on current x
   arr.sort(function(a, b) {
@@ -269,6 +283,7 @@ async function goLeft(dpx) {
   // now animate to make it move to the right
   
   let dx = 0;
+  
   let animate = window.setInterval(function() {
     
     dx += -pixels_per_frame;
@@ -307,21 +322,26 @@ async function goLeft(dpx) {
       }
       for (let i = arr.length-1; i > 0; i--) {
         if (arr[i].current.x < 0) {
-          console.log('hi');
+          //console.log('hi');
           arr.splice(i, 1);
         }
       }
-      console.log(arr);
+      // console.log(arr);
 
       slideInProgress = false;
-
+      return myResolve(slideInProgress);
     }
     
   }, 1000/fps);
+  
+}); // closing promise
+
 }
 
-function goRight(dpx) {
+async function goRight(dpx) {
   
+  return myPromise = new Promise(function(myResolve) {
+    
   if (slideInProgress) {
     return;
   } else {
@@ -335,13 +355,13 @@ function goRight(dpx) {
       arr.push(blocks[i]);
     }
   }
-  console.log(arr);
+  //console.log(arr);
 
   // SORT BY CURRENT X
   arr.sort(function(a, b) {
     return a.current.x - b.current.x;
   })
-  console.log(arr);
+  // console.log(arr);
   
   // ORIGIN & CURRENT
   let origin_x = arr[arr.length-1].origin.x;
@@ -401,23 +421,23 @@ function goRight(dpx) {
       }
       for (let i = arr.length-1; i > 0; i--) {
         if (arr[i].current.x >= arr[i].cols) {
-          console.log('hi');
           arr.splice(i, 1);
         }
       }
-      console.log(arr);
 
       slideInProgress = false;
-
+      return myResolve(slideInProgress);
     }
     
   }, 1000/fps);
   
+  });
+  
 }
 
 
-function goUp(dpx) {
-
+async function goUp(dpx) {
+  return myPromise = new Promise(function(myResolve) {
   if (slideInProgress) {
     return;
   } else {
@@ -431,7 +451,7 @@ function goUp(dpx) {
       arr.push(blocks[i]);
     }
   }
-  console.log(arr);
+  // console.log(arr);
 
   // SORT BY CURRENT X
   arr.sort(function(a, b) {
@@ -509,18 +529,22 @@ function goUp(dpx) {
       console.log(arr);
 
       slideInProgress = false;
-      // return slideInProgress;
+      return myResolve(slideInProgress);
 
     }
     
   }, 1000/fps);
   
+  });
+  
 }
 
 
 
-function goDown(dpx) {
-  
+async function goDown(dpx) {
+
+  return myPromise = new Promise(function(myResolve) {
+
   if (slideInProgress) {
     return;
   } else {
@@ -611,10 +635,13 @@ function goDown(dpx) {
       console.log(arr);
 
       slideInProgress = false;
+      return myResolve(slideInProgress);
 
     }
     
   }, 1000/fps);
+
+  });
   
 }
 
